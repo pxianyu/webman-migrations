@@ -1,0 +1,17 @@
+<?php
+
+namespace  database\seeders;
+use Eloquent\Migrations\Seeds\Seeder;
+
+class {{ class }} extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run() :void
+    {
+        // Insert your seed data here
+    }
+}

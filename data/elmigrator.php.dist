@@ -1,0 +1,24 @@
+<?php
+
+$capsule = new \Illuminate\Database\Capsule\Manager();
+$capsule->addConnection([
+	'driver'    => 'pgsql',
+	'host'      => 'localhost',
+	'database'  => 'pm',
+	'username'  => 'pm',
+	'password'  => 'thepmpassword',
+	'charset'   => 'utf8',
+	'collation' => 'utf8_unicode_ci',
+	'prefix'    => '',
+	'schema'	=> 'public'
+]);
+
+return [
+	'default_environment' => 'developpment',
+	'paths' => [
+		'migrations' => 'database/migrations',
+		'seeds' => 'database/seeders',
+	],
+	'migration_table' => 'el_migrations',
+	'db' => $capsule->getDatabaseManager()
+];
