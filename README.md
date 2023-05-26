@@ -9,3 +9,12 @@
 - php webman migrate:fresh 
 - php webman seed:run 执行数据填充
 - php webman seed:created UserSeeder 生成数据填充文件
+
+
+指定数据库连接
+```
+$this->schema()->setConnection(Db::connection('mysql2'))->create('orders', function (Blueprint $table) {
+$table->id();
+$table->timestamps();
+});
+```
