@@ -23,6 +23,7 @@ class CreateMigration extends AbstractCommand
             ->addArgument('name', InputArgument::REQUIRED, 'The migration name')
             ->addOption('--create', null, InputOption::VALUE_REQUIRED, 'The table to create')
             ->addOption('--table', null, InputOption::VALUE_REQUIRED, 'The table to migrate')
+            ->addOption('--path', null, InputOption::VALUE_REQUIRED, 'create file path')
             ->setHelp('Creates a new migration' . PHP_EOL);
 
         parent::configure();
@@ -36,6 +37,7 @@ class CreateMigration extends AbstractCommand
         $name = Str::snake(trim($this->input->getArgument('name')));
         $table = $this->input->getOption('table');
         $create = $this->input->getOption('create') ?: false;
+        $path = $this->input->getOption('path');
         if (! $table && is_string($create)) {
             $table = $create;
             $create = true;
@@ -43,7 +45,7 @@ class CreateMigration extends AbstractCommand
         if (! $table) {
             [$table, $create] = TableGuesser::guess($name);
         }
-        $this->writeMigration($name, $table, $create);
+        $this->writeMigration($name, $table, $create, $path);
 
         return 0;
     }
@@ -56,11 +58,11 @@ class CreateMigration extends AbstractCommand
      * @param bool $create
      * @throws \Exception
      */
-    protected function writeMigration(string $name, string $table, bool $create)
+    protected function writeMigration(string $name, string $table, bool $create, string $path)
     {
         $file = $this->creator->create(
             $name,
-            $this->getMigrationPath(),
+            $this->getMigrationPath().DIRECTORY_SEPARATOR.$path,
             $table,
             $create
         );
