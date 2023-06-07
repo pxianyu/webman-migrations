@@ -37,7 +37,7 @@ class CreateMigration extends AbstractCommand
         $name = Str::snake(trim($this->input->getArgument('name')));
         $table = $this->input->getOption('table');
         $create = $this->input->getOption('create') ?: false;
-        $path = $this->input->getOption('path');
+        $path = $this->input->getOption('path') ?: '';
         if (! $table && is_string($create)) {
             $table = $create;
             $create = true;
@@ -58,11 +58,11 @@ class CreateMigration extends AbstractCommand
      * @param bool $create
      * @throws \Exception
      */
-    protected function writeMigration(string $name, string $table, bool $create, string $path)
+    protected function writeMigration(string $name, string $table, bool $create, string $path = '')
     {
         $file = $this->creator->create(
             $name,
-            $this->getMigrationPath().DIRECTORY_SEPARATOR.$path,
+            $this->getMigrationPath() . ($path ? DIRECTORY_SEPARATOR . $path : ''),
             $table,
             $create
         );
