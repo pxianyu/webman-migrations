@@ -46,7 +46,7 @@ class Migrate extends AbstractCommand
         $this->migrator = new Migrator($this->repository, $this->getDb(), new Filesystem());
         $this->migrator->setOutput($output);
 
-        $this->migrator->usingConnection($this->database, function () use ($output, $input, $migrationPath) {
+        $this->migrator->usingConnection(null, function () use ($output, $input, $migrationPath) {
             $this->prepareDatabase();
 
             // Next, we will check to see if a path option has been defined. If it has

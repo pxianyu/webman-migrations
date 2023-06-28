@@ -23,29 +23,19 @@ abstract class Seeder
         return [];
     }
 
-    /** @var Connection */
-    private Connection $db;
+    private  $db;
 
-    public function setDb(Connection $db)
+    public function setDb($db)
     {
         $this->db = $db;
     }
 
-    /**
-     * @return Connection
-     */
-    protected function getDb(): Connection
-    {
-        return $this->db;
-    }
 
-    /**
-     * @return Connection
-     */
-    protected function db(): Connection
+    protected function getDb()
     {
         return $this->db;
     }
+    
 
     /**
      * @return string

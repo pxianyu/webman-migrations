@@ -30,7 +30,6 @@ class MigrateInstall extends AbstractCommand
         }
 
         $repository = new DatabaseMigrationRepository($this->getDb(), $this->getMigrationTable());
-        $repository->setSource($this->database);
         $repository->createRepository();
 
         $this->output->writeln('<info>Migration table created successfully.</info>');

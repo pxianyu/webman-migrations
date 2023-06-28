@@ -23,7 +23,8 @@ class CreateDatabase extends AbstractCommand
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $this->bootstrap($input, $output);
-        $this->getDb()->statement('CREATE DATABASE :database', ['database' => $input->getArgument('name')]);
+        $sql="CREATE DATABASE IF NOT EXISTS `{$input->getArgument('name')}` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;";
+        $this->getDb()->statement($sql);
 
         return 0;
     }

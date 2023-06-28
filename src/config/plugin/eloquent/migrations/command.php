@@ -9,4 +9,5 @@ return [
     Eloquent\Migrations\Command\RunSeed::class,
     Eloquent\Migrations\Command\MigrateInstall::class,
     Eloquent\Migrations\Command\Init::class,
+    Eloquent\Migrations\Command\CreateDatabase::class,
 ];

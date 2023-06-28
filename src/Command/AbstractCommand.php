@@ -3,7 +3,9 @@
 namespace Eloquent\Migrations\Command;
 
 use Closure;
+use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\DatabaseManager;
+use support\Log;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -40,8 +42,17 @@ abstract class AbstractCommand extends Command
         $this->configFile = (string)$input->getOption('config');
         $this->config = config('plugin.eloquent.migrations.app');
         $this->environment =  $this->config['default_environment'];
-        $this->database =  $this->config['database'] ?? null;
-        
+        $DbConfig=config('database.connections.mysql');
+        $dbName=$input->getOption('database');
+        $db=new Manager();
+        $db->addConnection($DbConfig);
+        if ($dbName){
+            $DbConfig['database']=$dbName;
+        }
+        $this->database =  $DbConfig['database']?? null;
+        $db->addConnection($DbConfig);
+        $this->config['db']=$db->getDatabaseManager();
+        $this->config['db_manger']=$db;
         if ($this->configFile === null) {
             $this->output->writeln('<danger>could not find nothing configuration a file. Set throught --config option or environment variable ELMIGRATOR_CONFIG</danger>');
         }
@@ -62,6 +73,10 @@ abstract class AbstractCommand extends Command
         return $this->config['db'];
     }
 
+    protected function getDBManger(): Manager
+    {
+        return $this->config['db_manger'];
+    }
     protected function environment(): string
     {
         return $this->environment;
