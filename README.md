@@ -18,3 +18,13 @@ $table->id();
 $table->timestamps();
 });
 ```
+dev 
+ `composer require pxianyu/migrations:dev-dev`
+ 在同一个host，同一个端口下，指定不同的库
+ 
+创建数据库
+`php webman create:database test`
+执行迁移
+`php webman migrate:run --database=test`
+填充数据
+`- php webman seed:run --database=test`
