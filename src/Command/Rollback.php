@@ -2,15 +2,13 @@
 
 namespace Eloquent\Migrations\Command;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Eloquent\Migrations\Migrations\Migrator;
+use Illuminate\Console\OutputStyle;
 use Illuminate\Database\Migrations\DatabaseMigrationRepository;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Str;
-use Illuminate\Support\Composer;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class Rollback extends AbstractCommand
 {
@@ -21,14 +19,14 @@ class Rollback extends AbstractCommand
      *
      * @var \Illuminate\Database\Migrations\Migrator
      */
-    protected $migrator;
+    protected \Illuminate\Database\Migrations\Migrator $migrator;
 
     /**
      * The migration repository
      *
      * @var DatabaseMigrationRepository
      */
-    protected $repository;
+    protected DatabaseMigrationRepository $repository;
 
     protected function configure()
     {
@@ -42,14 +40,14 @@ class Rollback extends AbstractCommand
         parent::configure();
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->bootstrap($input, $output);
         $this->repository = new DatabaseMigrationRepository($this->getDb(), $this->getMigrationTable());
         $this->migrator = new Migrator($this->repository, $this->getDb(), new Filesystem());
         $this->migrator->setOutput($output);
 
-        $this->migrator->setOutput(new \Illuminate\Console\OutputStyle($input, $output))
+        $this->migrator->setOutput(new OutputStyle($input, $output))
             ->rollback([$this->getMigrationPath()], [
                 'pretend' => $this->input->getOption('dry-run'),
                 'step' => (int)$this->input->getOption('step'),

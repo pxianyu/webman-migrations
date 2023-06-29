@@ -2,6 +2,7 @@
 
 namespace Eloquent\Migrations\Command;
 
+use Exception;
 use Illuminate\Database\Console\Migrations\TableGuesser;
 use Illuminate\Database\Migrations\MigrationCreator;
 use Illuminate\Filesystem\Filesystem;
@@ -31,7 +32,10 @@ class CreateMigration extends AbstractCommand
         $this->creator = new MigrationCreator(new Filesystem(), __DIR__ . '/../../data/stubs');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * @throws Exception
+     */
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->bootstrap($input, $output);
         $name = Str::snake(trim($this->input->getArgument('name')));
@@ -56,7 +60,8 @@ class CreateMigration extends AbstractCommand
      * @param string $name
      * @param string $table
      * @param bool $create
-     * @throws \Exception
+     * @param string $path
+     * @throws Exception
      */
     protected function writeMigration(string $name, string $table, bool $create, string $path = '')
     {
@@ -66,6 +71,6 @@ class CreateMigration extends AbstractCommand
             $table,
             $create
         );
-        $this->output->writeln("<info>Created Migration:</info> {$file}");
+        $this->output->writeln("<info>Created Migration:</info> $file");
     }
 }

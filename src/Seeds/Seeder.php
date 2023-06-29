@@ -2,7 +2,9 @@
 
 namespace Eloquent\Migrations\Seeds;
 
+use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Connection;
+use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Query\Builder;
 
 abstract class Seeder
@@ -23,19 +25,23 @@ abstract class Seeder
         return [];
     }
 
-    private  $db;
 
-    public function setDb($db)
+    private DatabaseManager|Manager $db;
+
+    public function setDb(Manager $db): void
     {
-        $this->db = $db;
+        $db->setAsGlobal();
+        $db->bootEloquent();
+        $this->db = $db->getDatabaseManager();
     }
 
-
-    protected function getDb()
+    /**
+     * @return DatabaseManager
+     */
+    protected function getDb(): DatabaseManager
     {
         return $this->db;
     }
-    
 
     /**
      * @return string

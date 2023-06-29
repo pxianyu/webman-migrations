@@ -3,6 +3,7 @@
 namespace Eloquent\Migrations\Command;
 
 use Illuminate\Support\Collection;
+use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Eloquent\Migrations\Migrations\Migrator;
@@ -26,7 +27,7 @@ class Status extends AbstractCommand
         parent::configure();
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->bootstrap($input, $output);
         $this->repository = new DatabaseMigrationRepository($this->getDb(), $this->getMigrationTable());
@@ -34,7 +35,7 @@ class Status extends AbstractCommand
         $this->migrator->setOutput($output);
 
         if (! $this->migrator->repositoryExists()) {
-            throw new \RuntimeException('The migration table is not installed');
+            throw new RuntimeException('The migration table is not installed');
         }
 
         $ran = $this->migrator->getRepository()->getRan();

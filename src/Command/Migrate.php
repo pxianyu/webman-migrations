@@ -7,6 +7,7 @@ use Illuminate\Console\OutputStyle;
 use Illuminate\Database\Migrations\DatabaseMigrationRepository;
 use Illuminate\Database\Migrations\Migrator as BaseMigrator;
 use Illuminate\Filesystem\Filesystem;
+use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -31,7 +32,7 @@ class Migrate extends AbstractCommand
         parent::configure();
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->bootstrap($input, $output);
 
@@ -46,7 +47,9 @@ class Migrate extends AbstractCommand
         $this->migrator = new Migrator($this->repository, $this->getDb(), new Filesystem());
         $this->migrator->setOutput($output);
 
-        $this->migrator->usingConnection(null, function () use ($output, $input, $migrationPath) {
+        $this->migrator->usingConnection(/**
+         * @throws ExceptionInterface
+         */ null, function () use ($output, $input, $migrationPath) {
             $this->prepareDatabase();
 
             // Next, we will check to see if a path option has been defined. If it has
@@ -66,8 +69,9 @@ class Migrate extends AbstractCommand
      * Prepare the migration database for running.
      *
      * @return void
+     * @throws ExceptionInterface
      */
-    protected function prepareDatabase()
+    protected function prepareDatabase(): void
     {
         if (! $this->migrator->repositoryExists()) {
             $this->call('migrate:install', array_filter([

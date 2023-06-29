@@ -10,7 +10,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
      * @param  string  $file
      * @return object
      */
-    public function resolve($file)
+    public function resolve($file): object
     {
         $migration = parent::resolve($file);
         $migration->db = $this->resolveConnection(
@@ -25,7 +25,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
      * @param  string  $path
      * @return object
      */
-    protected function resolvePath(string $path)
+    protected function resolvePath(string $path): object
     {
         $migration = parent::resolvePath($path);
         $migration->db = $this->resolveConnection(
@@ -34,7 +34,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
         return $migration;
     }
 
-    public function rollback($paths = [], array $options = [])
+    public function rollback($paths = [], array $options = []): array
     {
         $migration = $options['migration'] ?? null;
         if ($migration !== null) {
@@ -51,7 +51,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
         }
 
         if (count($migrations) === 0) {
-            $this->note('<info>Nothing to rollback.</info>');
+            $this->write('<info>Nothing to rollback.</info>');
 
             return [];
         }

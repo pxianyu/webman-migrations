@@ -7,7 +7,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
-use RuntimeException;
 
 class Init extends Command
 {
@@ -21,8 +20,8 @@ class Init extends Command
 			->setHelp('Initialize the project for Eloquent Migrations'.PHP_EOL);
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output)
-	{
+	protected function execute(InputInterface $input, OutputInterface $output): int
+    {
 		$this->createPath($input, $output);
 
 		return 0;

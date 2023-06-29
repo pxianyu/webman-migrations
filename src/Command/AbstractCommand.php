@@ -5,8 +5,8 @@ namespace Eloquent\Migrations\Command;
 use Closure;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\DatabaseManager;
-use support\Log;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -45,7 +45,6 @@ abstract class AbstractCommand extends Command
         $DbConfig=config('database.connections.mysql');
         $dbName=$input->getOption('database');
         $db=new Manager();
-        $db->addConnection($DbConfig);
         if ($dbName){
             $DbConfig['database']=$dbName;
         }
@@ -112,10 +111,10 @@ abstract class AbstractCommand extends Command
      * This method only asks for confirmation in production.
      *
      * @param string $warning
-     * @param  Closure|bool|null  $callback
+     * @param bool|Closure|null $callback
      * @return bool
      */
-    public function confirmToProceed(string $warning = 'Application In Production!', $callback = null): bool
+    public function confirmToProceed(string $warning = 'Application In Production!', bool|Closure $callback = null): bool
     {
         $callback = is_null($callback) ? $this->getDefaultConfirmCallback() : $callback;
         $shouldConfirm = $callback instanceof Closure ? call_user_func($callback) : $callback;
@@ -149,8 +148,9 @@ abstract class AbstractCommand extends Command
      * Call another console command.
      *
      * @param string $command
-     * @param  array   $arguments
+     * @param array $arguments
      * @return int
+     * @throws ExceptionInterface
      */
     public function call(string $command, array $arguments = []): int
     {

@@ -2,6 +2,7 @@
 
 namespace Eloquent\Migrations\Command;
 
+use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -24,7 +25,10 @@ class FreshMigration extends AbstractCommand
         parent::configure();
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * @throws ExceptionInterface
+     */
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->bootstrap($input, $output);
 
@@ -66,7 +70,7 @@ class FreshMigration extends AbstractCommand
      *
      * @return void
      */
-    protected function dropAllTables()
+    protected function dropAllTables(): void
     {
         $this->getDb()->connection($this->database)
             ->getSchemaBuilder()
@@ -78,7 +82,7 @@ class FreshMigration extends AbstractCommand
      *
      * @return void
      */
-    protected function dropAllViews()
+    protected function dropAllViews(): void
     {
         $this->getDb()->connection($this->database)
                     ->getSchemaBuilder()
@@ -89,7 +93,7 @@ class FreshMigration extends AbstractCommand
      *
      * @return void
      */
-    protected function dropAllTypes()
+    protected function dropAllTypes(): void
     {
         $this->getDb()->connection($this->database)
                     ->getSchemaBuilder()

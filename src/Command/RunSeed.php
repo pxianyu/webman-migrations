@@ -2,11 +2,13 @@
 
 namespace Eloquent\Migrations\Command;
 
+use InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Illuminate\Database\Eloquent\Model;
 use Eloquent\Migrations\Seeds\Seeder;
+use Throwable;
 
 class RunSeed extends AbstractCommand
 {
@@ -24,19 +26,20 @@ class RunSeed extends AbstractCommand
         parent::configure();
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->bootstrap($input, $output);
         if (!$this->confirmToProceed()) {
             return 1;
         }
 
-        $this->getDb();
 
         $start = microtime(true);
 
         $seedSet = $input->getOption('seed');
-        Model::unguarded(function () use ($seedSet) {
+        Model::unguarded(/**
+         * @throws Throwable
+         */ function () use ($seedSet) {
             if (empty($seedSet)) {
                 $this->runSeed();
             } else {
@@ -53,6 +56,9 @@ class RunSeed extends AbstractCommand
         return 0;
     }
 
+    /**
+     * @throws Throwable
+     */
     protected function runSeed($seed = null)
     {
         $seeds = $this->getSeeds();
@@ -67,14 +73,18 @@ class RunSeed extends AbstractCommand
         } elseif (array_key_exists($seed, $seeds)) {
             $this->executeSeed($seeds[$seed]);
         } else {
-            throw new \InvalidArgumentException(sprintf('The seed class "%s" does not exist', $seed));
+            throw new InvalidArgumentException(sprintf('The seed class "%s" does not exist', $seed));
         }
     }
 
+    /**
+     * @throws Throwable
+     */
     protected function executeSeed(Seeder $seeder)
     {
-        $db = $this->getDb()->connection($this->database);
+        $db = $this->getDBManger();
         $seeder->setDb($db);
+        $db=$db->getDatabaseManager();
         $this->output->writeln("<info>" . $seeder->getName() . "</info> seeding");
         $start = microtime(true);
         if (!$seeder->withinTransaction) {
@@ -101,7 +111,7 @@ class RunSeed extends AbstractCommand
                 require_once $file;
 
                 if (!class_exists($className)) {
-                    throw new \InvalidArgumentException(sprintf(
+                    throw new InvalidArgumentException(sprintf(
                         'Could not find class "%s" in file "%s"',
                         $className,
                         $file
@@ -110,7 +120,7 @@ class RunSeed extends AbstractCommand
 
                 $seed = new $className();
                 if (!($seed instanceof Seeder)) {
-                    throw new \InvalidArgumentException(sprintf(
+                    throw new InvalidArgumentException(sprintf(
                         'The class "%s" in file "%s" must extend \Hyde1\EloquentMigrations\Seeds\Seeder',
                         $className,
                         $file

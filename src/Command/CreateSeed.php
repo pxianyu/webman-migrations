@@ -2,6 +2,8 @@
 
 namespace Eloquent\Migrations\Command;
 
+use InvalidArgumentException;
+use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -22,7 +24,7 @@ class CreateSeed extends AbstractCommand
         parent::configure();
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->bootstrap($input, $output);
         $className = $this->getClassName();
@@ -30,14 +32,14 @@ class CreateSeed extends AbstractCommand
 
         $contents = file_get_contents(__DIR__ . '/../../data/Seeder.php.dist');
         if ($contents === false) {
-            throw new \RuntimeException('Cannot read template file...');
+            throw new RuntimeException('Cannot read template file...');
         }
 
         $contents = str_replace('{{ class }}', $className, $contents);
 
         $ret = file_put_contents($path, $contents);
         if ($ret === false) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'Cannot write seed file: %s',
                 $path
             ));
@@ -52,7 +54,7 @@ class CreateSeed extends AbstractCommand
         $className = (string) $this->input->getArgument('name');
 
         if (!preg_match('/^[A-Z][a-zA-Z0-9]*$/', $className)) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'This seeder name is not a valid PHP CamelCase Class name: %s',
                 $className
             ));
@@ -66,7 +68,7 @@ class CreateSeed extends AbstractCommand
         $path = $this->getSeedPath() . DIRECTORY_SEPARATOR . $className . '.php';
 
         if (is_file($path)) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'This seeder name is already taken: %s',
                 $className
             ));
