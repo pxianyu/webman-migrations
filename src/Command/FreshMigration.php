@@ -45,7 +45,7 @@ class FreshMigration extends AbstractCommand
             $this->output->writeln('<info>Dropped all types successfully.</info>');
         }
 
-        $this->call('migrate', array_filter([
+        $this->call('migrate:run', array_filter([
             '--database' => $this->database,
             '--force' => true,
         ]));
