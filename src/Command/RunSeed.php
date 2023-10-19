@@ -73,6 +73,8 @@ class RunSeed extends AbstractCommand
 
     protected function executeSeed(Seeder $seeder)
     {
+        $previousConnection = Model::getConnectionResolver()->getDefaultConnection();
+        Model::getConnectionResolver()->setDefaultConnection($this->database);
         $db = $this->getDb()->connection($this->database);
         $seeder->setDb($db);
         $this->output->writeln("<info>" . $seeder->getName() . "</info> seeding");
@@ -85,7 +87,8 @@ class RunSeed extends AbstractCommand
             });
         }
         $end = microtime(true);
-        $this->output->writeln("<info>" . $seeder->getName() . "</info> seeded" . sprintf('%.4fs', $end - $start));
+        $this->output->writeln("<info>" . $seeder->getName() . "</info> seeded " . sprintf('%.4fs', $end - $start));
+        Model::getConnectionResolver()->setDefaultConnection($previousConnection);
     }
 
     private ?array $seeds = null;
