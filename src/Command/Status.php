@@ -33,17 +33,21 @@ class Status extends AbstractCommand
         $this->migrator = new Migrator($this->repository, $this->getDb(), new Filesystem());
         $this->migrator->setOutput($output);
 
-        if (! $this->migrator->repositoryExists()) {
-            throw new \RuntimeException('The migration table is not installed');
-        }
+        $this->migrator->usingConnection($this->database, function () use ($output) {
+            if (! $this->migrator->repositoryExists()) {
+                $output->writeln('<error>The migration table is not installed</error>');
 
-        $ran = $this->migrator->getRepository()->getRan();
-        $batches = $this->migrator->getRepository()->getMigrationBatches();
-        if (count($migrations = $this->getStatusFor($ran, $batches)) > 0) {
-            $this->table(['Ran?', 'Migration', 'Batch'], $migrations->toArray());
-        } else {
-            $output->writeln('<error>No migrations found</error>');
-        }
+                return 1;
+            }
+
+            $ran = $this->migrator->getRepository()->getRan();
+            $batches = $this->migrator->getRepository()->getMigrationBatches();
+            if (count($migrations = $this->getStatusFor($ran, $batches)) > 0) {
+                $this->table(['Ran?', 'Migration', 'Batch'], $migrations->toArray());
+            } else {
+                $output->writeln('<error>No migrations found</error>');
+            }
+        });
 
         return 0;
     }

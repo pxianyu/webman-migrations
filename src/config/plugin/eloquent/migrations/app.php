@@ -3,7 +3,10 @@
 use Illuminate\Database\Capsule\Manager;
 
 $capsule = new Manager();
-$capsule->addConnection(config('database.connections.mysql'));
+$config = config('database');
+foreach ($config['connections'] as $key => $value) {
+    $capsule->addConnection($value, $key === $config['default'] ? 'default' : $key);
+}
 return [
     'enable' => true,
     'default_environment' => 'development',

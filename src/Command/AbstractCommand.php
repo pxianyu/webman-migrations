@@ -40,8 +40,8 @@ abstract class AbstractCommand extends Command
         $this->configFile = (string)$input->getOption('config');
         $this->config = config('plugin.eloquent.migrations.app');
         $this->environment =  $this->config['default_environment'];
-        $this->database =  $this->config['database'] ?? null;
-        
+        $this->database =  $input->getOption('database');
+
         if ($this->configFile === null) {
             $this->output->writeln('<danger>could not find nothing configuration a file. Set throught --config option or environment variable ELMIGRATOR_CONFIG</danger>');
         }
