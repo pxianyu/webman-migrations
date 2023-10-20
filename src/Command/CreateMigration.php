@@ -58,7 +58,7 @@ class CreateMigration extends AbstractCommand
      * @param bool $create
      * @throws \Exception
      */
-    protected function writeMigration(string $name, string $table, bool $create, string $path = '')
+    protected function writeMigration(string $name, ?string $table, ?bool $create, string $path = '')
     {
         $file = $this->creator->create(
             $name,
