@@ -25,7 +25,7 @@ abstract class AbstractCommand extends Command
     {
         $this->addOption('config', '-c', InputOption::VALUE_REQUIRED, 'The configuration file to load', 'elmigrator.php');
         $this->addOption('env', '-e', InputOption::VALUE_OPTIONAL, 'Choose an environment');
-        $this->addOption('database', '-d', InputOption::VALUE_OPTIONAL, 'The database connection to use');
+        $this->addOption('database', '-d', InputOption::VALUE_OPTIONAL, 'The database connection to use', 'default');
     }
 
     protected function bootstrap(InputInterface $input, OutputInterface $output): void
